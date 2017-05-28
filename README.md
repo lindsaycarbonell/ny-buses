@@ -9,9 +9,32 @@ How bus delays/breakdowns are affecting the student population of our coverage a
 - Information on bus delays and breakdowns in diff categories by route number
 
 ## Questions
-- Are there companies that are associated with more delays, esp in our coverage area?
-- Median accidents in our coverage area / Median accidents in NY
+- Are there bus lines that are associated with more delays, esp in our coverage area?
+- What makes students have attendance issues? Are those measurable?
+- Are there any schools near each other that have disparate attendance rates?
+- What is the bronx_attendance/ny_attendance vs. bronx_enroll/ny_enroll?
+
+- How is the school compensating for those delays?
+- Are the students missing free breakfast by being late?
+- How late are these students actually being?
+- Who is the company that has a really great record?
+
+
+TWO ANGLES: How is this affecting students, How are carriers being held accountable
+
 
 ## Visualization Ideas
 - Circle area map of delays in our coverage area by school.
 - showing the delays over time on a line/bar chart for NY overall vs coverage area
+
+## Sources
+- [NYSED Dataset](https://data.nysed.gov/lists.php?type=school)
+
+
+WHERE IS THE TIME PEG?
+
+## Other Students' Visualizations
+- TyLisa: Life expectancy in Harlem
+- TBA: Dominican population in Harlem
+- Joseph: Eviction data
+- Tyler: Taxi medallions
