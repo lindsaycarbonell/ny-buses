@@ -41,10 +41,6 @@ svg {
   opacity: 0.1;
 }
 
-.axis.y .tick text {
-  text-anchor: start;
-}
-
 .axis.y .tick line {
   stroke: none;
 }
