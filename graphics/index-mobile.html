@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
+
+  <script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
+  integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
+  crossorigin=""/>
+  <link href="css/main.css" rel="stylesheet" />
+  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
+  integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
+  crossorigin="" type="text/javascript"></script>
+</head>
+
+<body>
+<div class="graphic bar-chart"></div>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="http://cdn.rawgit.com/gka/d3-jetpack/master/build/d3-jetpack.js" charset="utf-8"></script>
+<script>
+$(document).ready(function(){
+
+console.log('ready');
+
+d3.csv('assets/all.csv', initChart);
+
+function initChart(data){
+
+
+  data.forEach(function(d) {
+
+    d.How_Long_Delayed = parseInt(d.How_Long_Delayed)
+  })
+
+
+    data = data.filter(function(d) {
+    return ! isNaN(d.How_Long_Delayed)
+  })
+
+    const max_delay = d3.max(data, function(d){
+    return parseInt(d.How_Long_Delayed);
+  })
+
+  const nested = d3.nest()
+    .key(function(d){
+      return d.Name;
+    })
+    .entries(data)
+    .slice(0,40);
+
+  nested.sort(function(a, b){
+    const a_total = d3.sum(a.values, function(d){
+      return d.How_Long_Delayed;
+    })
+    const b_total = d3.sum(b.values, function(d){
+      return d.How_Long_Delayed;
+    })
+    return d3.descending(a_total, b_total);
+  })
+
+  const school_names = nested.map(function(d){
+    return d.key;
+  })
+
+    // debugger
+  const height = 1000;
+  // const width = 1000;
+  const max_minutes = 3000;
+
+  const yScale = d3.scaleBand()
+                  .domain(school_names)
+                  .range([0,height]);
+
+  // const xScale = d3.scaleTime()
+  //   .domain([ 0, max_minutes * 60 * 1000 ])
+
+  const xScale = d3.scaleLinear()
+                  .domain([0, max_minutes])
+                  // .range([0, width]);
+
+  const opacityColorScale = d3.scaleThreshold()
+                    .domain([20, 40, 60])
+                    .range([0.2, 0.3, 0.5, 0.7]);
+
+  const xAxis = d3.axisTop()
+    .scale(xScale);
+                    
+                    // .range([0.2, 0.5, 0.8, 1.0])
+  // const standardColorScale = d3.scaleLinear()
+  //                   .domain([0, max_delay])
+  //                   .range(['#fff', '#551A8B'])
+
+  const parentSel = d3.select('.bar-chart');
+
+  const conventions = d3.conventions({
+    xAxis: xAxis,
+    y: yScale,
+    x: xScale,
+    // width: width,
+    height: height,
+    margin: {left: 20},
+    parentSel: parentSel
+  });
+  
+
+  xScale.rangeRound([0, conventions.width])
+
+  // const timeScale = d3.scaleTime()
+  //   .domain([ 0, max_minutes * 60 * 1000 ])
+  //   .range([ 0, conventions.width ]);
+
+  xAxis
+    .tickValues([10, 20, 30, 40, 50].map(d => d * 60))
+    .tickFormat(function(d) {
+      return `${d/100}`;
+    })
+    .tickSize(-height);
+
+  // xAxis.tickFormat(d => {
+  //   return `${d/60}`;
+  // })
+
+  // debugger
+
+  // xAxis
+  //   .scale(timeScale)
+  //   .tickFormat(d3.timeFormat("%h:%M"))
+
+  conventions.drawAxis();
+
+  //var width = d3.select('svg').node().offsetWidth
+
+  const schools = conventions.svg
+    .append('g.schools')
+    .appendMany(nested, 'g.school');
+
+  schools.translate(function(d){
+    const y = yScale(d.key);
+    return [0, y];
+
+  });
+
+  schools.append('g.label')
+    .append('text')
+    .text(function(d) {
+      return d.key
+    })
+    .attr('y', 12)
+    .st({
+      fontSize: 10,
+      fontFamily: 'sans-serif'
+    })
+
+  const barG = schools.append('g.bar')
+    .translate([ 0, 15 ])
+
+  barG.each(function(d){
+    var total_width = 0;
+
+    const filtered = d.values.filter(function(d){
+      const parsed = parseInt(d.How_Long_Delayed);
+      if (!isNaN(parsed)){
+        return true;
+      } else {
+        return false;
+      }
+
+    })
+
+    filtered.sort(function(a, b){
+      return d3.descending(a.How_Long_Delayed, b.How_Long_Delayed);
+    });
+
+    const delayGs = d3.select(this).appendMany(filtered, 'g.delay');
+
+    delayGs.append('line.delay')
+      .attr('y2', yScale.bandwidth())
+      .style('stroke', 'white')
+
+    delayGs
+      .append('rect.delay')
+    //draw the rects
+      .attr('width', function(d){
+        const width = xScale(parseInt(d.How_Long_Delayed));
+        // console.log(width);
+        return width;
+      })
+      .attr('height', yScale.bandwidth() * 0.5)
+      // .style('fill', function(d){
+      //   return delayColors(parseInt(d.How_Long_Delayed));
+      // })
+      .style('opacity', function(d){
+        return opacityColorScale(parseInt(d.How_Long_Delayed));
+      })
+    //separate the rects
+      .each(function(d) {
+        const current_width = total_width;
+        //total_width += xScale(parseInt(d.How_Long_Delayed))
+        total_width += parseInt(d3.select(this).attr('width'));
+
+        d3.select(this.parentElement).translate([current_width, 0]);
+        // console.log(current_width);
+        return [current_width, 0];
+
+      })
+  });
+
+
+
+  d3.select('.x.axis .domain').remove();
+
+  d3.select('.x.axis .tick text').text(function(d) {
+    return `${d/100} hours of delay`;
+  })
+
+  d3.select('.x.axis').translate([0, 0])
+
+  d3.select('.y.axis').style('display', 'none')
+  d3.selectAll('.y.axis .tick text').attr('dx', 15);
+
+  d3.selectAll('.y.axis .tick').each(function(d) {
+    const textSel = d3.select(this).select('text');
+    const textNode = textSel.node();
+    this.appendChild(textNode.cloneNode(true));
+
+    textSel.attr('fill', null)
+      .attr('stroke', 'white')
+      .attr('stroke-width', '2px')
+  })
+
+}; //init
+
+
+}); //doc ready
+
+
+$(window).resize(function(){
+
+});
+
+</script>
+</body>
+
+
+</html>
