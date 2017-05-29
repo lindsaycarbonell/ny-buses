@@ -7,7 +7,7 @@ svg {
 }
 .delay{
   fill:#551A8B;
-  /*stroke:black;*/
+  /*stroke: white;*/
 }
 .delay:hover{
   fill:red;
@@ -35,4 +35,12 @@ svg {
   border-right-color:transparent;
   margin-left:0;
   left:auto;
+}
+
+.axis.x .tick line {
+  opacity: 0.1;
+}
+
+.axis.y .tick line {
+  stroke: none;
 }
