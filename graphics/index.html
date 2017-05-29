@@ -16,6 +16,13 @@
     width:400px;
     height:400px;
   }
+  .mapCircle{
+    stroke:none;
+  }
+  .mapCircle:hover{
+    fill:blue;
+  }
+
   </style>
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
@@ -40,31 +47,77 @@ $(document).ready(function(){
 
 console.log('ready');
 
-function buildMap(){
+d3.csv('assets/school_delays.csv', initMap);
 
+function initMap(data){
+
+
+  var mymap = L.map('mapid', {
+    center: [40.81432890763712,-73.9500904083252],
+    zoom: 13,
+    dragging: false,
+    zoomControl: false,
+    scrollWheelZoom: false
+  });
+
+  // mymap = L.map('mapid').setView([40.83641142008943,-73.92631530761719], 12);
+
+
+
+  L.tileLayer('https://api.mapbox.com/styles/v1/lindsaycarbonell/cj390pvr4000h2rpq8aoebfka/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibGluZHNheWNhcmJvbmVsbCIsImEiOiJjaXRlajNhd2cwNjBkMzJvOW04OWQ0dm5xIn0.GGAg70cv_JpPUXxFvkdY-w').addTo(mymap);
+
+  data.forEach(function(d){
+
+    // debugger
+
+    if (parseInt(d.num_of_incidents) >= 10){
+      var thisCircle = L.circle([parseFloat(d.Latitude), parseFloat(d.Longitude)], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+        radius: d.median_delay*10,
+        className: 'mapCircle'
+      });
+
+      thisCircle.bindTooltip(d.Name, { className: "my-label", offset: [0, 0] });
+
+      thisCircle.addTo(mymap);
+    }
+
+
+  })
+
+
+
+
+    //create markers
+    // lats.push(d.Latitude);
+    // longs.push(d.Longitude);
+
+    // var thisMarker = L.marker([d.Latitude, d.Longitude]);
+    //
+    // thisMarker.addTo(mymap);
 
 
 }
 
 
-d3.csv('assets/all.csv', init);
+d3.csv('assets/all.csv', initChart);
 
-function init(data){
-  var mymap;
-  var mapData;
-  var markers = [];
-  var w;
-  var lats = [];
-  var longs = [];
+function initChart(data){
 
-  mymap = L.map('mapid').setView([40.83641142008943,-73.92631530761719], 12);
 
-  L.tileLayer('https://api.mapbox.com/styles/v1/lindsaycarbonell/cj390pvr4000h2rpq8aoebfka/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibGluZHNheWNhcmJvbmVsbCIsImEiOiJjaXRlajNhd2cwNjBkMzJvOW04OWQ0dm5xIn0.GGAg70cv_JpPUXxFvkdY-w').addTo(mymap);
+
 
 
   data.forEach(function(d) {
+
+
+
+
     d.How_Long_Delayed = parseInt(d.How_Long_Delayed)
   })
+
 
   data = data.filter(function(d) {
     return ! isNaN(d.How_Long_Delayed)
