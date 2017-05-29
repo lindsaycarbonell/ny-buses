@@ -1,44 +1,21 @@
 <!DOCTYPE html>
 <head>
-  <style>
-  svg {
-    border: 1px solid black;
-  }
-  .delay{
-    fill:#551A8B;
-    /*stroke:black;*/
-  }
-  .delay:hover{
-    fill:red;
-    opacity:1!important;
-  }
-  #mapid{
-    width:400px;
-    height:400px;
-  }
-  .mapCircle{
-    stroke:none;
-  }
-  .mapCircle:hover{
-    fill:blue;
-  }
-
-  </style>
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
+
   <script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
   integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
   crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
+  <link href="css/main.css" rel="stylesheet" />
+  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
   integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
   crossorigin="" type="text/javascript"></script>
 </head>
 
 <body>
 
-  <div id="mapid"></div>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="http://cdn.rawgit.com/gka/d3-jetpack/master/build/d3-jetpack.js" charset="utf-8"></script>
@@ -47,83 +24,22 @@ $(document).ready(function(){
 
 console.log('ready');
 
-d3.csv('assets/school_delays.csv', initMap);
-
-function initMap(data){
-
-
-  var mymap = L.map('mapid', {
-    center: [40.81432890763712,-73.9500904083252],
-    zoom: 13,
-    dragging: false,
-    zoomControl: false,
-    scrollWheelZoom: false
-  });
-
-  // mymap = L.map('mapid').setView([40.83641142008943,-73.92631530761719], 12);
-
-
-
-  L.tileLayer('https://api.mapbox.com/styles/v1/lindsaycarbonell/cj390pvr4000h2rpq8aoebfka/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibGluZHNheWNhcmJvbmVsbCIsImEiOiJjaXRlajNhd2cwNjBkMzJvOW04OWQ0dm5xIn0.GGAg70cv_JpPUXxFvkdY-w').addTo(mymap);
-
-  data.forEach(function(d){
-
-    // debugger
-
-    if (parseInt(d.num_of_incidents) >= 10){
-      var thisCircle = L.circle([parseFloat(d.Latitude), parseFloat(d.Longitude)], {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.5,
-        radius: d.median_delay*10,
-        className: 'mapCircle'
-      });
-
-      thisCircle.bindTooltip(d.Name, { className: "my-label", offset: [0, 0] });
-
-      thisCircle.addTo(mymap);
-    }
-
-
-  })
-
-
-
-
-    //create markers
-    // lats.push(d.Latitude);
-    // longs.push(d.Longitude);
-
-    // var thisMarker = L.marker([d.Latitude, d.Longitude]);
-    //
-    // thisMarker.addTo(mymap);
-
-
-}
-
-
 d3.csv('assets/all.csv', initChart);
 
 function initChart(data){
 
 
-
-
-
   data.forEach(function(d) {
-
-
-
 
     d.How_Long_Delayed = parseInt(d.How_Long_Delayed)
   })
 
 
-  data = data.filter(function(d) {
+    data = data.filter(function(d) {
     return ! isNaN(d.How_Long_Delayed)
   })
 
-  const max_delay = d3.max(data, function(d){
+    const max_delay = d3.max(data, function(d){
     return parseInt(d.How_Long_Delayed);
   })
 

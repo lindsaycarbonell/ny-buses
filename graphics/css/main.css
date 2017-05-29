@@ -1,0 +1,38 @@
+@font-face{
+  font-family:'Franklin Bold';
+  src:url('../assets/fonts/NYTFranklinBold.otf');
+}
+svg {
+  border: 1px solid black;
+}
+.delay{
+  fill:#551A8B;
+  /*stroke:black;*/
+}
+.delay:hover{
+  fill:red;
+  opacity:1!important;
+}
+#mapid{
+  width:400px;
+  height:400px;
+}
+.mapCircle{
+  /*stroke:none;*/
+}
+.mapCircle:hover{
+  /*fill:blue;*/
+}
+.schoolLabel, .leaflet-tooltip{
+  font-family:'Franklin Bold';
+  font-size:9pt;
+  line-height:11pt;
+  background-color:transparent;
+  border:none;
+  box-shadow:none;
+}
+.schoolLabel::before{
+  border-right-color:transparent;
+  margin-left:0;
+  left:auto;
+}
