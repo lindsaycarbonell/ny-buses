@@ -24,7 +24,7 @@ $(document).ready(function(){
 
 console.log('ready');
 
-d3.csv('assets/all.csv', initChart);
+d3.csv('assets/all_19.csv', initChart);
 
 function initChart(data){
 
@@ -47,8 +47,8 @@ function initChart(data){
     .key(function(d){
       return d.Name;
     })
-    .entries(data)
-    .slice(0,40);
+    .entries(data);
+    //.slice(0,40);
 
   nested.sort(function(a, b){
     const a_total = d3.sum(a.values, function(d){
@@ -64,7 +64,6 @@ function initChart(data){
     return d.key;
   })
 
-    // debugger
   const height = 500;
   const width = 1000;
   const max_minutes = 800;
@@ -125,7 +124,7 @@ function initChart(data){
     d3.select(this).appendMany(filtered, 'rect.delay')
     //draw the rects
       .attr('width', function(d){
-        const width = xScale(parseInt(d.How_Long_Delayed));
+        const width = xScale(parseInt(d.How_Long_Delayed))/5;
         // console.log(width);
         return width;
       })
