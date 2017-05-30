@@ -3,7 +3,7 @@
   src:url('../assets/fonts/NYTFranklinBold.otf');
 }
 svg {
-  border: 1px solid black;
+  /*border: 1px solid black;*/
 }
 .delay{
   fill:#551A8B;

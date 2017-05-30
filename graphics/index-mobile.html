@@ -28,6 +28,21 @@ d3.csv('assets/all_19.csv', initChart);
 
 function initChart(data){
 
+  // let tot = 0;
+
+  // data.forEach(function(d) {
+  //   if (d.Name === "Opportunity Charter") {
+  //     // console.log(d.How_Long_Delayed)
+  //     const int = parseInt(d.How_Long_Delayed, 10);
+  //     if (! Number.isNaN(int)) {
+  //       // console.log(int);
+  //       tot += int;
+  //       console.log(tot);
+  //       console.log(tot / 60);
+  //     }
+  //   }
+  // })
+
 
   data.forEach(function(d) {
 
@@ -114,7 +129,7 @@ function initChart(data){
   xAxis
     .tickValues([10, 20, 30, 40, 50].map(d => d * 60))
     .tickFormat(function(d) {
-      return `${d/100}`;
+      return `${Math.floor(d/60)}`;
     })
     .tickSize(-height);
 
